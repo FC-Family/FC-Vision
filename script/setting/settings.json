@@ -1,0 +1,129 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor", 
+  "DefaultVehicleConfig": "SimpleFlight",
+  "ViewMode": "SpringArmChase",
+  "UsageScenario": "",
+  "RpcEnabled": true,
+  "CameraDirector": {
+    "FollowDistance": -0.7,
+    "X": 0, "Y": 0, "Z": 100,
+    "Pitch": 0, "Roll": 0, "Yaw": 0
+   },
+
+  "SubWindows": [
+    {
+      "WindowID": 0,
+      "CameraName": "front_center",
+      "ImageType": 0,
+      "Visible": false
+    },
+    {
+      "WindowID": 1,
+      "CameraName": "front_center",
+      "ImageType": 5,
+      "Visible": false
+    },
+    {
+      "WindowID": 2,
+      "CameraID": 3,
+      "ImageType": 1,
+      "Visible": false
+    }
+  ],
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 640,            
+        "Height": 480,          
+        "FOV_Degrees": 80,
+        "AutoExposureSpeed": 100,
+        "AutoExposureBias": 0,
+        "AutoExposureMaxBrightness": 0.64,
+        "AutoExposureMinBrightness": 0.03,
+        "MotionBlurAmount": 0,
+        "TargetGamma": 1.0
+      },
+      {
+        "ImageType": 2,
+        "Width": 640,
+        "Height": 480,
+        "FOV_Degrees": 80   
+      }
+    ]
+  },
+  "Vehicles": {
+    "drone_1": {
+      "VehicleType": "SimpleFlight",
+      "DefaultVehicleState": "Armed",
+      "EnableCollisionPassthrogh": false,
+      "EnableCollisions": true,
+      "AllowAPIAlways": true,
+      "RC": {
+        "RemoteControlID": -1,
+        "AllowAPIWhenDisconnected": false
+      },
+      "Cameras": {
+        "front_center": {
+          "CaptureSettings": [
+            {
+              "ImageType": 0,
+              "Width": 640,
+              "Height": 480,
+              "FOV_Degrees": 80,
+              "TargetGamma": 1.0
+            },
+            {
+              "ImageType": 2,
+              "Width": 640,
+              "Height": 480,
+              "FOV_Degrees": 80
+            }
+          ],
+          "X": 0.125,
+          "Y": 0,
+          "Z": 0,
+          "Pitch": 0,
+          "Roll": 0,
+          "Yaw": 0
+        }
+      },
+      "Sensors": {
+        "LidarSensor1": {
+          "SensorType": 6,
+          "Enabled" : true,
+          "Range"   : 50,
+          "NumberOfChannels": 128,
+          "RotationsPerSecond": 10,
+          "PointsPerSecond": 100000,
+          "X": 0, "Y": 0, "Z": 0,
+          "Roll": 0, "Pitch": 0, "Yaw" : 0,
+          "VerticalFOVUpper": 45,
+          "VerticalFOVLower": -37,
+          "HorizontalFOVStart": -180,
+          "HorizontalFOVEnd": 180,
+          "DrawDebugPoints": false,
+          "DataFrame": "SensorLocalFrame"
+        },
+        
+        "Imu": {
+          "SensorType": 2,
+          "Enabled": true,
+          "AngularRandomWalk": 0.3,
+          "GyroBiasStabilityTau": 500,
+          "GyroBiasStability": 4.6,
+          "VelocityRandomWalk": 0.24,
+          "AccelBiasStabilityTau": 800,
+          "AccelBiasStability": 36
+        }      
+      }
+    }
+  },
+  "OriginGeopoint": {
+    "Latitude": 0.61468,
+    "Longitude": 0.140165,
+    "Altitude": 122
+  }
+  
+}

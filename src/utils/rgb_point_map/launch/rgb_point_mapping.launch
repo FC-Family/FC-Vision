@@ -1,0 +1,35 @@
+<launch>  
+  <node pkg="rgb_point_map" name="rgb_point_mapping_node" type="rgb_point_mapping_node" output="screen">
+  
+    <!-- ! Subscribed Topic ! -->
+    <remap from ="/rgb_mapping/rgbd"        to="/airsim_node/drone_1/world_img_rgb_pcd"/>
+    <remap from ="/rgb_mapping/img"         to="/airsim_node/drone_1/front_center/Scene"/>
+    <remap from ="/rgb_mapping/body_pose"   to="/airsim_node/drone_1/odom_local_enu"/>
+    <remap from ="/rgb_mapping/gimbal_pose" to="/gimbal_pose"/>
+
+    <!-- ! Parameters ! -->
+    <param name="rgb_mapping/voxel_size" value="0.05"/>
+    <param name="rgb_mapping/chunk_size" value="32" type="int"/>
+    <param name="rgb_mapping/origin_x"   value="-20.0"/>
+    <param name="rgb_mapping/origin_y"   value="-100.0"/>
+    <param name="rgb_mapping/origin_z"   value="-1.0"/>
+    <param name="rgb_mapping/map_size_x" value="150.0"/>
+    <param name="rgb_mapping/map_size_y" value="150.0"/>
+    <param name="rgb_mapping/map_size_z" value="30.0"/>
+    <param name="rgb_mapping/en_inherit" value="false" type="bool"/>
+    <!-- FOV: [80° x 65°] -->
+		<param name="rgb_mapping/fx"         value="381.36114501953125" type="double"/>
+		<param name="rgb_mapping/fy"         value="381.36114501953125" type="double"/>
+		<param name="rgb_mapping/cx"         value="320.0" type="double"/>
+		<param name="rgb_mapping/cy"         value="240.0" type="double"/>
+    <param name="rgb_mapping/img_rows"   value="480" type="int"/>
+    <param name="rgb_mapping/img_cols"   value="640" type="int"/>
+    <param name="rgb_mapping/fov_scale"  value="3.0" type="double"/>
+    <param name="rgb_mapping/c2b_x"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_y"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_z"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_roll"   value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_pitch"  value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_yaw"    value="0.0" type="double"/>
+  </node>
+</launch>

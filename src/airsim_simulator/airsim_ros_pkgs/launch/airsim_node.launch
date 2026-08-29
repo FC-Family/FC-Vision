@@ -1,0 +1,77 @@
+<launch>
+	<arg name="output" default="screen"/>
+	<arg name="publish_clock" default="false"/>
+	<arg name="is_vulkan" default="true"/>
+	<arg name="host" default="localhost" />
+
+	<arg name="map_size_x" value="100.0" />
+    <arg name="map_size_y" value="100.0" />
+    <arg name="map_size_z" value="50.0" />
+    <arg name="origin_x" value="-10.0" />
+    <arg name="origin_y" value="-10.0" />
+    <arg name="origin_z" value="0.0" />
+    <arg name="resolution" value="0.1" />
+	<arg name="vel_limit" value="7.0" />
+	<arg name="acc_limit" value="10.0" />
+
+	<node name="airsim_node" pkg="airsim_ros_pkgs" type="airsim_node" output="$(arg output)">
+		<param name="is_vulkan" type="bool" value="false" /> 
+		<!-- ROS timer rates. Note that timer callback will be processed at maximum possible rate, upperbounded by the following ROS params -->
+		<param name="update_airsim_img_response_every_n_sec" type="double" value="0.01" /> 
+		<param name="update_airsim_control_every_n_sec" type="double" value="0.01" />
+		<param name="update_lidar_every_n_sec" type="double" value="0.05" />
+		<param name="publish_clock" type="bool" value="$(arg publish_clock)" />
+		<param name="world_frame_id" type="string" value="world_enu" />
+		<param name="odom_frame_id" type="string" value="odom_local_enu" />
+		<param name="coordinate_system_enu" type="bool" value="true" />
+		<param name="map_resolution" type="double" value="$(arg resolution)" />
+
+		<param name="lidar/extrinsic_x"     value="0.0" type="double"/>
+		<param name="lidar/extrinsic_y"     value="0.0" type="double"/>
+		<param name="lidar/extrinsic_z"     value="0.0" type="double"/>
+		<param name="lidar/extrinsic_roll"  value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+		<param name="lidar/extrinsic_pitch" value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+		<param name="lidar/extrinsic_yaw"   value="$(eval -0.0*3.1415926/180.0)" type="double"/>
+
+        <param name="cam/extrinsic_x"     value="0.0" type="double"/>
+		<param name="cam/extrinsic_y"     value="0.0" type="double"/>
+		<param name="cam/extrinsic_z"     value="0.0" type="double"/>
+		<param name="cam/extrinsic_roll"  value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+		<param name="cam/extrinsic_pitch" value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+		<param name="cam/extrinsic_yaw"   value="$(eval -0.0*3.1415926/180.0)" type="double"/>
+        <param name="cam/max_depth"       value="15.0"/>
+		<param name="cam/skip_pixels"     value="20" type="int"/>
+
+		<!-- FOV: [80° x 65°] -->
+		<param name="cam/fx"              value="381.36114501953125" type="double"/>
+		<param name="cam/fy"              value="381.36114501953125" type="double"/>
+		<param name="cam/cx"              value="320.0" type="double"/>
+		<param name="cam/cy"              value="240.0" type="double"/>
+		<param name="cam/rows"            value="480" type="int"/>
+		<param name="cam/cols"            value="640" type="int"/>
+
+		<!-- Trajectory visualization -->
+		<param name="traj/enable"         value="true" type="bool"/>
+		<param name="traj/window"         value="1.0" type="double"/>
+		<param name="traj/buckets"        value="4" type="int"/>
+		<param name="traj/thickness"      value="18.0" type="double"/>
+		<param name="traj/duration"       value="1.0" type="double"/>
+		<param name="traj/publish_interval" value="0.2" type="double"/>
+		<param name="traj/max_points"     value="300" type="int"/>
+		<param name="traj/alpha_pow"      value="2.5" type="double"/>
+		<param name="traj/min_alpha"      value="0.15" type="double"/>
+		<param name="traj/min_size"       value="3.0" type="double"/>
+		<param name="traj/min_spacing"    value="0.05" type="double"/>
+		<param name="traj/max_segment"    value="0.02" type="double"/>
+
+	</node>
+
+  	<!-- <node pkg="state_machine" type="goal_publisher" name="goal_publisher" output="screen"/>  -->
+
+	<!-- Static transforms -->
+	<include file="$(find airsim_ros_pkgs)/launch/static_transforms.launch"/>
+	<!-- trajectory server -->
+	<!-- <include file="$(find state_machine)/launch/server.launch" /> -->
+	<!-- px4 controller node -->
+	<include file="$(find px4ctrl)/launch/ctrl_md.launch" />
+</launch>

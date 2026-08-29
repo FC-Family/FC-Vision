@@ -1,0 +1,4 @@
+<launch>
+  <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find rgb_point_map)/config/RGBPointMap.rviz" />
+  <node pkg="tf" type="static_transform_publisher" name="world_enu_to_world" args="0 0 0 0 0 0 world_enu world 100" />
+</launch>

@@ -1,0 +1,65 @@
+<launch> 
+
+  <!-- ! Parameters -->
+  <arg name="mesh_file"          value="$(eval find('fc_vision_manager') + '/data/tunnel.obj')"/>
+  <arg name="reg_T_file"         value="tunnel.yaml"/>
+  <arg name="path_file"          value="tunnel.yaml"/>
+  <arg name="resolution"         value="0.15"/>
+  <arg name="map_size_x"         value="30.0"/>
+  <arg name="map_size_y"         value="50.0"/>
+  <arg name="map_size_z"         value="10.0"/>
+  <arg name="map_origin_x"       value="-10.0"/>
+  <arg name="map_origin_y"       value="-40.0"/>
+  <arg name="virtual_ceil"       value="41.0"/>
+  <arg name="ground_height"      value="-3.0"/>
+  <arg name="max_visible_dist"   value="20.0"/>
+  <arg name="mapping_vis_z_max"  value="40.0"/>
+  <arg name="mapping_vis_z_min"  value="-1.0"/>
+  <arg name="fov_vis_scale"      value="1.0"/>
+  <arg name="vis_inflation"      value="0.4"/>
+  <arg name="safe_height"        value="1.0"/>
+  <arg name="vp_max_vis_dist"    value="10.0"/>
+  <arg name="pitch_upper_degs"   value="30.0"/>
+  <arg name="pitch_lower_degs"   value="-60.0"/>
+  <arg name="path_interval"      value="1.0"/>
+  <arg name="max_vel"            value="1.0"/>
+  <arg name="max_acc"            value="1.5"/>
+  <arg name="max_jer"            value="5.0"/>
+  <arg name="max_yd"             value="25.0"/>
+  <arg name="traj_l"             value="5.0"/>
+  <arg name="path_l"             value="12.0"/>
+  
+  <include file="$(find fc_vision_manager)/launch/param.xml">
+    
+    <!-- ! Params for Each Module -->
+    <arg name="mesh_file"          value="$(arg mesh_file)"/>
+    <arg name="reg_T_file"         value="$(arg reg_T_file)"/>
+    <arg name="path_file"          value="$(arg path_file)"/>
+    <arg name="resolution"         value="$(arg resolution)"/>
+    <arg name="map_size_x"         value="$(arg map_size_x)"/>
+    <arg name="map_size_y"         value="$(arg map_size_y)"/>
+    <arg name="map_size_z"         value="$(arg map_size_z)"/>
+    <arg name="map_origin_x"       value="$(arg map_origin_x)"/>
+    <arg name="map_origin_y"       value="$(arg map_origin_y)"/>
+    <arg name="virtual_ceil"       value="$(arg virtual_ceil)"/>
+    <arg name="ground_height"      value="$(arg ground_height)"/>
+    <arg name="max_visible_dist"   value="$(arg max_visible_dist)"/>
+    <arg name="mapping_vis_z_max"  value="$(arg mapping_vis_z_max)"/>
+    <arg name="mapping_vis_z_min"  value="$(arg mapping_vis_z_min)"/>
+    <arg name="fov_vis_scale"      value="$(arg fov_vis_scale)"/>
+    <arg name="vis_inflation"      value="$(arg vis_inflation)"/>
+    <arg name="safe_height"        value="$(arg safe_height)"/>
+    <arg name="vp_max_vis_dist"    value="$(arg vp_max_vis_dist)"/>
+    <arg name="pitch_upper_degs"   value="$(arg pitch_upper_degs)"/>
+    <arg name="pitch_lower_degs"   value="$(arg pitch_lower_degs)"/>
+    <arg name="path_interval"      value="$(arg path_interval)"/>
+    <arg name="max_vel"            value="$(arg max_vel)"/>
+    <arg name="max_acc"            value="$(arg max_acc)"/>
+    <arg name="max_jer"            value="$(arg max_jer)"/>
+    <arg name="max_yd"             value="$(arg max_yd)"/>
+    <arg name="traj_l"             value="$(arg traj_l)"/>
+    <arg name="path_l"             value="$(arg path_l)"/>
+
+  </include>
+
+</launch>

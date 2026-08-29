@@ -1,0 +1,286 @@
+<launch>
+  <!-- ! Topic ! -->
+  <arg name="odom_topic"     default="/airsim_node/drone_1/odom_local_enu"/>
+  <arg name="gimbal_topic"   default="/gimbal_pose"/>
+  <arg name="lidar_topic"    default="/airsim_node/drone_1/world_lidar_cloud"/>
+  <arg name="depth_topic"    default="/airsim_node/drone_1/front_center/DepthPerspective"/>
+  <arg name="img_topic"      default="/airsim_node/drone_1/front_center/Scene"/>
+  <arg name="cam_info_topic" default="/airsim_node/drone_1/front_center/Scene/camera_info"/>
+
+  <!-- ! Parameters ! -->
+  <arg name="mesh_file"/>
+  <arg name="reg_T_file"/>
+  <arg name="path_file"/>
+  <arg name="resolution"/>
+  <arg name="map_size_x"/>
+  <arg name="map_size_y"/>
+  <arg name="map_size_z"/>
+  <arg name="map_origin_x"/>
+  <arg name="map_origin_y"/>
+  <arg name="virtual_ceil"/>
+  <arg name="ground_height"/>
+  <arg name="max_visible_dist"/>
+  <arg name="mapping_vis_z_max"/>
+  <arg name="mapping_vis_z_min"/>
+  <arg name="fov_vis_scale"/>
+  <arg name="vis_inflation"/>
+  <arg name="safe_height"/>
+  <arg name="vp_max_vis_dist"/>
+  <arg name="pitch_upper_degs"/>
+  <arg name="pitch_lower_degs"/>
+  <arg name="path_interval"/>
+  <arg name="max_vel"/>
+  <arg name="max_acc"/>
+  <arg name="max_jer"/>
+  <arg name="max_yd"/>
+  <arg name="traj_l"/>
+  <arg name="path_l"/>
+  <arg name="simulator"         default="true"/>
+  <arg name="fov_h"             default="55.0"/>
+  <arg name="fov_w"             default="70.0"/>
+  <arg name="drone_radius"      default="0.25"/>
+
+  <node pkg="fc_vision_manager" name="fc_vision" type="fc_vision" output="screen">
+
+    <!-- ! Manager ! -->
+    <remap from="/manager_node/odometry" to="$(arg odom_topic)"/>
+    <remap from="/manager_node/gimbal"   to="$(arg gimbal_topic)"/>
+
+    <param name="manager_node/target_mesh_file" value="$(arg mesh_file)"/>
+    <param name="manager_node/resolution"       value="$(arg resolution)" /> 
+    <param name="manager_node/reg_T_file"       value="$(arg reg_T_file)"/>
+    <param name="manager_node/path_file"        value="$(arg path_file)"/>
+    <param name="manager_node/user_p_interval"  value="$(arg path_interval)"/>
+    <param name="manager_node/vis_inf"          value="$(arg vis_inflation)"/>
+
+    <!-- ! Mapping ! -->
+    <!-- ? Subscribed Topic -->
+    <remap from ="/map_ros/pose"                  to="$(arg odom_topic)"/>
+    <remap from ="/map_ros/depth"                 to="$(arg depth_topic)"/>
+    <remap from ="/map_ros/cloud"                 to="$(arg lidar_topic)"/>
+    <!-- ? Prediction HCMap -->
+    <param name="hcmap/resolution"      value="$(arg resolution)" type="double"/>
+    <param name="hcmap/interval"        value="1.0" type="double"/>
+    <param name="hcmap/plane_thickness" value="3.0" type="double"/>
+    <param name="hcmap/inflateVoxel"    value="3" type="int"/>
+    <param name="hcmap/visible_range"   value="$(arg vp_max_vis_dist)" type="double"/>
+    <!-- ? Real-world SDFMap -->
+    <param name="sdf_map/resolution"          value="$(arg resolution)" /> 
+    <param name="sdf_map/map_size_x"          value="$(arg map_size_x)" />   
+    <param name="sdf_map/map_size_y"          value="$(arg map_size_y)" /> 
+    <param name="sdf_map/map_size_z"          value="$(arg map_size_z)" /> 
+    <param name="sdf_map/map_back_x"          value="$(arg map_origin_x)" />
+    <param name="sdf_map/map_back_y"          value="$(arg map_origin_y)" /> 
+    <param name="sdf_map/obstacles_inflation" value="0.4" /> 
+    <param name="sdf_map/target_obs_inf"      value="0.4" /> 
+    <param name="sdf_map/obstacles_inf_z"     value="0.3" /> 
+    <param name="sdf_map/target_obs_inf_z"    value="0.3" /> 
+    <param name="sdf_map/local_bound_inflate" value="0.5"/>
+    <param name="sdf_map/local_map_margin"    value="50"/>
+    <param name="sdf_map/ground_height"       value="$(arg ground_height)"/>
+    <param name="sdf_map/default_dist"        value="0.0"/>
+    <param name="sdf_map/virtual_ceil_height" value="$(arg virtual_ceil)"/>
+    <param name="sdf_map/optimistic"          value="false" type="bool"/>
+    <param name="sdf_map/signed_dist"         value="false" type="bool"/>
+    <param name="sdf_map/p_hit"               value="0.96"/>
+    <param name="sdf_map/p_miss"              value="0.495"/>
+    <param name="sdf_map/p_min"               value="0.12"/>
+    <param name="sdf_map/p_max"               value="0.93"/>
+    <param name="sdf_map/p_occ"               value="0.30"/>
+    <param name="sdf_map/min_ray_length"      value="0.3"/>
+    <param name="sdf_map/max_ray_length"      value="$(arg max_visible_dist)"/>
+    <param name="sdf_map/airsim_flag"         value="$(arg simulator)"/>
+    <!-- ? ROS Service -->
+    <param name="map_ros/mapping_fps"                   value="5.0" type="double"/>
+    <param name="map_ros/partial_time"                  value="0.2" type="double"/>
+    <param name="map_ros/esdf_slice_height"             value="5.0"/>
+    <param name="map_ros/visualization_truncate_height" value="$(arg mapping_vis_z_max)"/>
+    <param name="map_ros/visualization_truncate_low"    value="$(arg mapping_vis_z_min)"/>
+    <param name="map_ros/show_occ_time"                 value="false"/>
+    <param name="map_ros/show_esdf_time"                value="false"/>
+    <param name="map_ros/show_all_map"                  value="true"/>
+    <param name="map_ros/show_local_map"                value="true"/>
+    <param name="map_ros/show_depth"                    value="true"/>
+    <param name="map_ros/show_local_range"              value="true"/>
+    <param name="map_ros/show_target"                   value="true"/>
+    <param name="map_ros/show_env"                      value="true"/>
+    <param name="map_ros/show_inflate"                  value="true"/>
+    <param name="map_ros/frame_id"                      value="world"/>
+    <param name="map_ros/airsim_flag"                   value="$(arg simulator)"/>
+    <param name="map_ros/h_fov"                         value="360.0"/>
+    <param name="map_ros/v_fov_min"                     value="-37.0"/>
+    <param name="map_ros/v_fov_max"                     value="45.0"/>
+    <param name="map_ros/inf_fov"                       value="4.0"/>
+    <param name="map_ros/h_res"                         value="1.3"/>
+    <param name="map_ros/v_res"                         value="1.3"/>
+    <param name="map_ros/dil_pixels"                    value="3"/>
+    <!-- ? Type of Inputs -->
+    <!-- 
+    * dp:   depth camera + pose
+    * dgp:  depth camera + gimbal + pose
+    * cp:   LiDAR + pose
+    * ctep: LiDAR + target + env + pose (Tracking mode) 
+    -->
+    <param name="map_ros/dp"   value="false" type="bool"/>
+    <param name="map_ros/dgp"  value="false" type="bool"/>
+    <param name="map_ros/cp"   value="true" type="bool"/>
+    <param name="map_ros/ctep" value="false" type="bool"/>
+    <!-- ? Depth Extrinsic Parameters -->
+    <!-- ? AirSim Sensor -> should transform param from NED to ENU -->
+    <!-- ? Extrinsic Definition: x -> positive for forward, negative for backward
+         ?                       y -> positive for right, negative for left
+         ?                       z -> positive for down, negative for up -->
+    <!-- * That means you adjust the sensor in NED frame on the body. -->
+    <!-- ? For LiDAR sensor in AirSim, the extrinsic parameters are: -->
+    <!-- * If you set offset (x, y, z) in setting.json of AirSim, you should set the value as (y, x, -z) here. -->
+    <!-- * If you set rotation (roll, pitch, yaw) in setting.json of AirSim, you should set the value as (pitch, roll, -yaw) here. 
+         * Note: AirSim uses degree, you should convert it to rad. -->
+    <!-- ? For Camera/Depth sensor in AirSim, the extrinsic parameters are: -->
+    <!-- * If you set offset (x, y, z) in setting.json of AirSim, you should set the value as (x, -y, -z) here. -->
+    <param name="map_ros/extrinsic_x"     value="0.0" type="double"/>
+    <param name="map_ros/extrinsic_y"     value="0.0" type="double"/>
+    <param name="map_ros/extrinsic_z"     value="-0.0" type="double"/>
+    <param name="map_ros/extrinsic_roll"  value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+    <param name="map_ros/extrinsic_pitch" value="$(eval 0.0*3.1415926/180.0)" type="double"/>
+    <param name="map_ros/extrinsic_yaw"   value="$(eval -0.0*3.1415926/180.0)" type="double"/>
+
+    <!-- ! Topology Finder ! -->
+    <param name="sk/Ground"               value="true" type="bool"/>
+    <param name="sk/cal_number"           value="10000" type="int"/>
+    <param name="sk/est_number"           value="10" type="int"/>
+    <param name="sk/ds_number"            value="3000" type="int"/>
+    <param name="sk/selected_num"         value="500" type="int"/>
+    <param name="sk/k_KNN"                value="6" type="int"/>
+    <param name="sk/iteration_extraction" value="2" type="int"/>
+    <param name="sk/iteration_shrinking"  value="5" type="int"/>
+    <param name="sk/merge_threshold"      value="1.2" type="double"/>
+    <param name="sk/cluster_area"         value="400.0" type="double"/>
+    <param name="input/resolution"        value="$(arg resolution)" type="double"/>
+
+    <!-- ! Path Searching ! -->
+    <param name="hdastar/lambda_heu"           value="10.0" type="double"/>
+    <param name="hdastar/resolution"           value="$(arg resolution)" type="double"/>
+    <param name="hdastar/allocate_num"         value="1000000" type="int"/>
+    <param name="hdastar/max_vis_search_time"  value="0.01" type="double"/>
+    <param name="hdastar/max_safe_search_time" value="0.01" type="double"/>
+    <param name="hdastar/max_hc_search_time"   value="0.02" type="double"/>
+    <param name="hdastar/safe_height"          value="$(arg safe_height)" type="double"/>
+
+    <!-- ! Perception Utils ! -->
+    <param name="perception_utils/top_angle"   value="$(eval arg('fov_h')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/left_angle"  value="$(eval arg('fov_w')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/right_angle" value="$(eval arg('fov_w')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/max_dist"    value="$(arg vp_max_vis_dist)" type="double"/>
+    <param name="perception_utils/vis_dist"    value="$(arg fov_vis_scale)" type="double"/>
+    <param name="perception_utils/shrink_fac"  value="0.8" type="double"/>
+
+    <!-- ! Visibility-equivalent Path Replanning ! -->
+    <param name="replanning/opt_inflation"   value="10.0" type="double"/>
+    <param name="replanning/env_fps_size"    value="512" type="int"/>
+    <param name="replanning/pitch_upper"     value="$(arg pitch_upper_degs)" type="double"/>
+    <param name="replanning/pitch_lower"     value="$(arg pitch_lower_degs)" type="double"/>
+    <param name="replanning/theta_step"      value="10.0" type="double"/>
+    <param name="replanning/phi_step"        value="10.0" type="double"/>
+    <param name="replanning/top_k"           value="50" type="int"/>
+    <param name="replanning/alpha_dist"      value="40.0" type="double"/>
+    <param name="replanning/drone_radius"    value="$(arg drone_radius)" type="double"/>
+    <param name="replanning/safe_height"     value="$(arg safe_height)" type="double"/>
+    <param name="replanning/max_v"           value="$(arg max_vel)" type="double"/>
+    <param name="replanning/max_w"           value="$(eval arg('max_yd')*3.1415926/180.0)" type="double"/>
+    <param name="replanning/path_interval"   value="$(arg path_interval)" type="double"/>
+    <param name="replanning/vis_search_step" value="1" type="int"/>
+    <param name="replanning/open_pool_range" value="3.0" type="double"/>
+
+    <!-- ! Trajectory Generation ! -->
+    <param name="traj_gen/vmax_"    value="$(arg max_vel)" type="double"/>
+    <param name="traj_gen/amax_"    value="$(arg max_acc)" type="double"/>
+    <param name="traj_gen/jmax_"    value="$(arg max_jer)" type="double"/>
+    <param name="traj_gen/ydmax_"   value="$(eval arg('max_yd')*3.1415926/180.0)" type="double"/>
+    <param name="traj_gen/safe_inf" value="0.4" type="double"/>
+    <param name="traj_gen/rho_T"    value="40.0" type="double"/>
+    <param name="traj_gen/rho_RT"   value="50.0" type="double"/>
+    <param name="traj_gen/rho_j"    value="0.0" type="double"/>
+    <param name="traj_gen/rho_a"    value="50.0" type="double"/>
+    <param name="traj_gen/rho_v"    value="900.0" type="double"/>
+    <param name="traj_gen/rho_p"    value="200.0" type="double"/>
+    <param name="traj_gen/rho_Rp"   value="50.0" type="double"/>
+    <param name="traj_gen/rho_e"    value="1.0" type="double"/>
+
+    <remap from="/replanning_fsm/odometry" to="$(arg odom_topic)"/>
+
+    <param name="replanning_fsm/drone_radius"      value="$(arg drone_radius)" type="double"/>
+    <param name="replanning_fsm/path_interval"     value="$(arg path_interval)" type="double"/>
+    <param name="replanning_fsm/local_fps"         value="10.0" type="double"/>
+    <param name="replanning_fsm/safety_fps"        value="3.0" type="double"/>
+    <param name="replanning_fsm/vis_fps"           value="1.0" type="double"/>
+    <param name="replanning_fsm/progress_fps"      value="5.0" type="double"/>
+    <param name="replanning_fsm/traj_l"            value="$(arg traj_l)" type="double"/>
+    <param name="replanning_fsm/path_l"            value="$(arg path_l)" type="double"/>
+    <param name="replanning_fsm/replan_time"       value="0.2" type="double"/>
+    <param name="replanning_fsm/replan_full_exec"  value="2.0" type="double"/>
+    <param name="replanning_fsm/replan_periodic"   value="1.0" type="double"/>
+    <param name="replanning_fsm/replan_proportion" value="0.3" type="double"/>
+    <param name="replanning_fsm/safety_horizon"    value="10.0" type="double"/>
+
+  </node>
+
+  <!-- ! Trajectory Server ! -->
+  <node pkg="fc_vision_manager" name="traj_server" type="traj_server" output="screen">
+    
+    <remap from="/traj_server/odom"       to="$(arg odom_topic)"/>
+    <remap from="/traj_server/gimbal"     to="$(arg gimbal_topic)"/>
+    <remap from="/traj_server/pos_cmd"    to="planning/pos_cmd"/>
+    <remap from="/traj_server/gimbal_cmd" to="/gimbal_angle_euler_cmd"/>
+    
+    <param name="traj_server/enable"  value="true" type="bool"/>
+    <param name="traj_server/max_vel" value="$(arg max_vel)" type="double"/>
+    <param name="traj_server/fov_h"   value="$(arg fov_h)" type="double"/>
+    <param name="traj_server/fov_w"   value="$(arg fov_w)" type="double"/>
+
+    <param name="traj_server/pitch_upper" value="$(arg pitch_upper_degs)" type="double"/>
+    <param name="traj_server/pitch_lower" value="$(arg pitch_lower_degs)" type="double"/>
+    <param name="traj_server/radius"      value="$(arg drone_radius)" type="double"/>
+
+    <param name="perception_utils/top_angle"   value="$(eval arg('fov_h')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/left_angle"  value="$(eval arg('fov_w')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/right_angle" value="$(eval arg('fov_w')*3.1415926/360.0)" type="double"/>
+    <param name="perception_utils/max_dist"    value="$(arg vp_max_vis_dist)" type="double"/>
+    <param name="perception_utils/vis_dist"    value="$(arg fov_vis_scale)" type="double"/>
+
+    <param name="traj_server/enable_inherit" value="false"/>
+
+  </node>
+
+  <!-- ! RGB Point Mapping ! -->
+  <node pkg="rgb_point_map" name="rgb_point_mapping_node" type="rgb_point_mapping_node" output="screen">
+    <remap from ="/rgb_mapping/rgbd"        to="/airsim_node/drone_1/world_img_rgb_pcd"/>
+    <remap from ="/rgb_mapping/img"         to="$(arg img_topic)"/>
+    <remap from ="/rgb_mapping/body_pose"   to="$(arg odom_topic)"/>
+    <remap from ="/rgb_mapping/gimbal_pose" to="$(arg gimbal_topic)"/>
+
+    <param name="rgb_mapping/voxel_size" value="0.02"/>
+    <param name="rgb_mapping/chunk_size" value="32" type="int"/>
+    <param name="rgb_mapping/origin_x"   value="-20.0"/>
+    <param name="rgb_mapping/origin_y"   value="-80.0"/>
+    <param name="rgb_mapping/origin_z"   value="-1.0"/>
+    <param name="rgb_mapping/map_size_x" value="100.0"/>
+    <param name="rgb_mapping/map_size_y" value="160.0"/>
+    <param name="rgb_mapping/map_size_z" value="100.0"/>
+    <param name="rgb_mapping/en_inherit" value="false" type="bool"/>
+    <!-- FOV: [80° x 65°] -->
+		<param name="rgb_mapping/fx"         value="381.36114501953125" type="double"/>
+		<param name="rgb_mapping/fy"         value="381.36114501953125" type="double"/>
+		<param name="rgb_mapping/cx"         value="320.0" type="double"/>
+		<param name="rgb_mapping/cy"         value="240.0" type="double"/>
+    <param name="rgb_mapping/img_rows"   value="480" type="int"/>
+    <param name="rgb_mapping/img_cols"   value="640" type="int"/>
+    <param name="rgb_mapping/fov_scale"  value="2.0" type="double"/>
+    <param name="rgb_mapping/c2b_x"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_y"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_z"      value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_roll"   value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_pitch"  value="0.0" type="double"/>
+    <param name="rgb_mapping/c2b_yaw"    value="0.0" type="double"/>
+  </node>
+
+</launch>

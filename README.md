@@ -8,7 +8,7 @@
         Yang Xu, and
         <a href="https://uav.hkust.edu.hk/group/" target="_blank">Shaojie Shen</a><sup></sup>
     <p>
-        <h45> 
+        <h45>
             HKUST Aerial Robotics Group
             <br>
         </h5>
@@ -20,6 +20,7 @@
 
 ## 📢 News
 
+* **[29/08/2026]**: The released FC-Vision codebase and development environment setup are now available.
 * **[16/06/2026]**: FC-Vision is accepted to RA-L. The source code is coming soon!
 
 ## 📜 Introduction
@@ -43,14 +44,69 @@ Please cite our paper if you use this project in your research:
 @article{feng2026fc,
   title={FC-Vision: Real-Time Visibility-Aware Replanning for Occlusion-Free Aerial Target Structure Scanning in Unknown Environments},
   author={Feng, Chen and Xu, Yang and Shen, Shaojie},
-  journal={arXiv preprint arXiv:2602.13720},
-  year={2026}
+  journal={IEEE Robotics and Automation Letters},
+  year={2026},
+  publisher={IEEE}
 }
 ```
 
 **License Notice**: This project is released under the PolyForm Noncommercial License 1.0.0 and is intended for non-commercial use only; commercial use is not permitted without explicit permission from the copyright owners. Please see [LICENSE](LICENSE) for details.
 
 Please kindly star ⭐️ this project if it helps you. We take great efforts to develop and maintain it 😁.
+
+## 🛠️ Installation
+
+**Prerequisite:**
+* ROS Noetic (Ubuntu 20.04)
+* PCL 1.10
+* [Eigen 3.4.1](https://hkustconnect-my.sharepoint.com/:u:/g/personal/cfengag_connect_ust_hk/ES7krJtO3E1Oh4wY0-Wcr-gBDZ3dWz9bpbFNKp6Yhpn3Yg?e=mfiKrO)
+* Trajectory Optimization
+```shell
+  sudo apt update
+  sudo apt install cpufrequtils
+  sudo apt install libompl-dev
+```
+* AirSim Simulator
+```
+  git clone -b 4.25 git@github.com:EpicGames/UnrealEngine.git
+  cd UnrealEngine
+  ./Setup.sh
+  ./GenerateProjectFiles.sh
+  make
+
+  git clone https://github.com/Microsoft/AirSim.git
+  cd AirSim
+  ./setup.sh
+  ./build.sh
+```
+Modify your ```~/Documents/AirSim/settings.json``` as the same as [setting.json](./script/setting/settings.json) and download the UE simulation environments from [Google Drive](https://drive.google.com/drive/folders/1U7slhtakIY3R8oK34_FUbCEG9s9qyByi?usp=sharing).
+
+**Compilation:**
+```shell
+  catkin_make --cmake-args -Wno-dev
+```
+
+If you have installed ***Anaconda*** or ***Miniconda***, please use ``catkin_make --cmake-args -Wno-dev -DPYTHON_EXECUTABLE=/usr/bin/python3``.
+
+## 🚀 Quick Start
+
+* Change UE path in your machine
+
+You should change ```UPROJECT``` and ```UE4_EDITOR``` with your own path in ```./run_${DEMO_SCENARIO}.sh``` from [script](./script/).
+
+* Start the full stack
+
+```shell
+cd script && ./run_${DEMO_SCENARIO}.sh
+```
+
+where ```${DEMO_SCENARIO}``` is ```east_church```, ```kino_wall```, or ```tunnel```.
+
+* Stop all services
+
+```shell
+cd script && ./kill_demo.sh
+```
 
 ## 🤗 FC-Family Works
 
